@@ -5,7 +5,9 @@
 1. Obtaining RNA-fasta:
 
   * [Enseble](http://www.ensembl.org/biomart/)
-  * The longest series of exons for trenscript.
+  * The longest series of exons for trenscript
+  
+  (yes, it works the same way as my script, up to replacing CDS with exon)
 
 2. Simulate RNA reads:
 It is seems that it takes in account expression data: [Polyester](https://github.com/leekgroup/polyester_code/blob/master/polyester_manuscript.Rmd)
