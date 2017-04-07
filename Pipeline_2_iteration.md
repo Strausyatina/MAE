@@ -1,13 +1,16 @@
-# Pipeline, 1st iteration
+# Pipeline, 2nd iteration
 
 > Idea of changing method of obtaining data and using another simulator.
 
 1. Obtaining RNA-fasta:
 
-
+..* [Enseble](http://www.ensembl.org/biomart/)
+..* The longest series of exons for trenscript.
 
 2. Simulate RNA reads:
 It is seems that it takes in account expression data: [Polyester](https://github.com/leekgroup/polyester_code/blob/master/polyester_manuscript.Rmd)
+
+(It needs too many requirements!!!)
 
 ---
 And as before:
