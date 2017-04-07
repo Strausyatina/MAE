@@ -1,11 +1,11 @@
 # Pipeline, 2nd iteration
 
-> Idea of changing method of obtaining data and using another simulator.
+> Idea of changing method of obtaining data and using another simulator:
 
 1. Obtaining RNA-fasta:
 
   * [Enseble](http://www.ensembl.org/biomart/)
-  * The longest series of exons for trenscript
+  * The longest series of **exons** for trenscript
   
   (yes, it works the same way as my script, up to replacing "CDS" with "exon")
 
