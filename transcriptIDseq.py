@@ -106,7 +106,7 @@ def GetTranscriptFasta (trID, coords, fasta, outFolder):
             nR += 1
             
     with open (oFile, 'w') as OUT:
-        OUT.write('>' + trID + StringSplitN(transcript, 60))            
+        OUT.write('>' + trID + StringSplitN(transcript, 60) + '\n')            
     print("fasta subfile is written")
     return 
 
