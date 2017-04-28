@@ -1,6 +1,6 @@
 '''
 "--GCMat" -- path to gene counts matrix
-"--trIDs" -- path to file with column of transcripts
+"--GenTrIDs" -- path to file with column of transcripts
 '''
 
 import argparse
@@ -37,7 +37,7 @@ def main():
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--GCMat", required=True, help="path to gene counts matrix")
-    parser.add_argument("--trIDs", required=True, help="path to file with column of transcripts")
+    parser.add_argument("--GenTrIDs", required=True, help="path to file with column of transcripts")
     args = parser.parse_args()
 
     CountsIDsGtoTallinone(args.GCMat, args.trIDs)
