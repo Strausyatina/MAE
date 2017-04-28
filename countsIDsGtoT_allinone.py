@@ -20,6 +20,8 @@ def ObtainTGDict(trIDs):
     res = {}
     with open (trIDs, 'r') as f:
 	for line in f:
+		if line[0] =='#':
+			continue
 		cur = line.strip().split()
 		res[cur[1]] = cur[0]
     return res
@@ -40,7 +42,7 @@ def main():
     parser.add_argument("--GenTrIDs", required=True, help="path to file with column of transcripts")
     args = parser.parse_args()
 
-    CountsIDsGtoTallinone(args.GCMat, args.trIDs)
+    CountsIDsGtoTallinone(args.GCMat, args.GenTrIDs)
     
 if __name__ == "__main__":
     main()
