@@ -20,7 +20,15 @@ python3 mRNAfastaInterval_longestT.py --fasta genome.fa --gtf some.gtf --chrom N
 ```
 python3 countsIDsGtoT_allinone.py --GCMat SV1_AblY11_11_03_24_2015_R1_001_counts.txt --GenTrIDs longTrans_interval.tsv
 ```
-* 
+* Obtain simulated RNA-seq by POlyester:
+```
+mat = t(t(read.csv("~/Data/mice_genomes/pseudo/SV1_AblY11_11_03_24_2015_R1_001_counts_TRANSCRIPT.txt", 
+      header = F, sep = '\t')[,2]))
+
+simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/CAST_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/CAST/2804/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
+
+simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/129S1_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/129S1/2804/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
+```
 
 ---
 And as before:
