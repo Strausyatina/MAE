@@ -3,8 +3,9 @@
 > Idea of changing method of obtaining data and using another simulator: Polyester
 
 Given:
-1. pseudo fasta for 2 lines (GRCm38 with distinguishing SNPs)
+1. pseudo fasta for 2 lines: CAST and 129S1 (GRCm38 with distinguishing SNPs)
 2. gene counts data from real experiments
+
 ---
 
 1. Obtaining RNA-fasta for a region (15_7811054_8708742):
