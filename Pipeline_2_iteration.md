@@ -1,18 +1,23 @@
 # Pipeline, 2nd iteration
 
-> Idea of changing method of obtaining data and using another simulator:
+> Idea of changing method of obtaining data and using another simulator: Polyester
 
-1. Obtaining RNA-fasta:
+Given:
+1. pseudo fasta for 2 lines (GRCm38 with distinguishing SNPs)
+2. gene counts data from real experiments
+---
+
+1. Obtaining RNA-fasta for a region (15_7811054_8708742):
 ```
-python3 mRNAfastaInterval_longestT.py --fasta genome.fa --gtf some.gtf --chrom N --s n1 --e n2 --ofasta mRNA_interval.fa --oGT longestTranscriptS_intrval.fa
+python3 mRNAfastaInterval_longestT.py --fasta genome.fa --gtf some.gtf --chrom N --s n1 --e n2 --ofasta mRNA_interval.fa --oGT longTrans_interval.tsv
 
 ```
 
 2. Simulate RNA reads [Polyester]:
 (https://github.com/leekgroup/polyester_code/blob/master/polyester_manuscript.Rmd)
-* From given gene counts obtain transcript counts (consider that this transcript):
+* From given (by Sveta) gene counts obtain transcript counts (consider as longest transcript counts):
 ```
-python3 countsIDsGtoT_allinone.py longestTranscriptS_intrval.fa
+python3 countsIDsGtoT_allinone.py --GCMat SV1_AblY11_11_03_24_2015_R1_001_counts.txt --GenTrIDs longTrans_interval.tsv
 ```
 
 
