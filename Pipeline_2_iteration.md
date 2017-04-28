@@ -25,9 +25,9 @@ python3 countsIDsGtoT_allinone.py --GCMat SV1_AblY11_11_03_24_2015_R1_001_counts
 mat = t(t(read.csv("~/Data/mice_genomes/pseudo/SV1_AblY11_11_03_24_2015_R1_001_counts_TRANSCRIPT.txt", 
       header = F, sep = '\t')[,2]))
 
-simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/CAST_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/CAST/2804/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
+simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/CAST_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/CAST/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
 
-simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/129S1_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/129S1/2804/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
+simulate_experiment_countmat(fasta="~/Data/mice_genomes/pseudo/129S1_pseudo.15_7811054_8708742.fa", readmat = mat, outdir='~/Data/mice_genomes/pseudo/polyester/129S1/', readlen = 70, seed=5, error_rate = 0.005, paired = TRUE)
 ```
 
 ---
@@ -41,17 +41,8 @@ And as before:
 
 4. align simulated reads on the other reference:
 ```
-~/Tools/STAR --genomeDir ~/Data/mice_genomes/pseudo/CAST_pseudo/ --readFilesIn ./129S1_pseudo_15_7811054_8708742-1.fastq ./129S1_pseudo_15_7811054_8708742-2.fastq --outFileNamePrefix ~/Data/mice_genomes/pseudo/129S1_pseudo_15_7811054_8708742.10000.
-
-samtools view -Sb 129S1_pseudo_15_7811054_8708742.10000.Aligned.out.sam > 129S1_pseudo_15_7811054_8708742.10000.Aligned.out.bam
-samtools sort 129S1_pseudo_15_7811054_8708742.10000.Aligned.out.bam 129S1_pseudo_15_7811054_8708742.10000
-samtools index 129S1_pseudo_15_7811054_8708742.10000.bam
-
-~/Tools/STAR --genomeDir ~/Data/mice_genomes/pseudo/129S1_pseudo/ --readFilesIn ./CAST_pseudo_15_7811054_8708742-1.fastq ./CAST_pseudo_15_7811054_8708742-2.fastq --outFileNamePrefix ~/Data/mice_genomes/pseudo/CAST_pseudo_15_7811054_8708742.10000.
-  
-samtools view -Sb CAST_pseudo_15_7811054_8708742.10000.Aligned.out.sam > CAST_pseudo_15_7811054_8708742.10000.Aligned.out.bam
-samtools sort CAST_pseudo_15_7811054_8708742.10000.Aligned.out.bam CAST_pseudo_15_7811054_8708742.10000
-samtools index CAST_pseudo_15_7811054_8708742.10000.bam
+~/Tools/STAR --genomeDir ~/Data/mice_genomes/pseudo/CAST_pseudo/ --readFilesIn ~/Data/mice_genomes/pseudo/polyester/129S1/2804/sample_01_1.fasta ~/Data/mice_genomes/pseudo/polyester/129S1/2804/sample_01_2.fasta --outSAMtype BAM SortedByCoordinate --outFileNamePrefix ~/Data/mice_genomes/pseudo/polyester/129S1/2804/129S1_pseudo_onCAST_15_7811054_8708742.
+~/Tools/STAR --genomeDir ~/Data/mice_genomes/pseudo/129S1_pseudo/ --readFilesIn ~/Data/mice_genomes/pseudo/polyester/CAST/2804/sample_01_1.fasta ~/Data/mice_genomes/pseudo/polyester/CAST/2804/sample_01_2.fasta --outSAMtype BAM SortedByCoordinate --outFileNamePrefix ~/Data/mice_genomes/pseudo/polyester/CAST/2804/CAST_pseudo_on129S1_15_7811054_8708742.
 ```
 
 5. obtain bed file with snp positions for each pseudo_line:
