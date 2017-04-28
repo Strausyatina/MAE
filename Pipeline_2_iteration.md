@@ -3,16 +3,18 @@
 > Idea of changing method of obtaining data and using another simulator:
 
 1. Obtaining RNA-fasta:
+```
+python3 mRNAfastaInterval_longestT.py --fasta genome.fa --gtf some.gtf --chrom N --s n1 --e n2 --ofasta mRNA_interval.fa --oGT longestTranscriptS_intrval.fa
 
-  * [Enseble](http://www.ensembl.org/biomart/)
-  * The longest series of **exons** for transcript
-  
-  (yes, it works the same way as my script, up to replacing "CDS" with "exon")
+```
 
-2. Simulate RNA reads:
-It is seems that it takes in account expression data: [Polyester](https://github.com/leekgroup/polyester_code/blob/master/polyester_manuscript.Rmd)
+2. Simulate RNA reads [Polyester]:
+(https://github.com/leekgroup/polyester_code/blob/master/polyester_manuscript.Rmd)
+* From given gene counts obtain transcript counts (consider that this transcript):
+```
+python3 countsIDsGtoT_allinone.py longestTranscriptS_intrval.fa
+```
 
-(It needs too many requirements!!!)
 
 ---
 And as before:
