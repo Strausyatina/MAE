@@ -15,25 +15,16 @@ def ObtainGCDict(GCMat):
             res[data[0]] = data[1]
     return res
 
-
-def ObtainTGDict(trIDs):
-    res = {}
-    with open (trIDs, 'r') as f:
-	for line in f:
-		if line[0] =='#':
-			continue
-		cur = line.strip().split()
-		res[cur[1]] = cur[0]
-    return res
-
-
 def CountsIDsGtoTallinone(GCMat, trIDs):
     GenCounts = ObtainGCDict(GCMat)
-    TrGen = ObtainTGDict(trIDs)
-    
+   
     with open(GCMat.split('.')[0] + '_TRANSCRIPT' + '.txt', 'w') as W:
-        for item in TrGen:
-            W.write(item + '\t' + GenCounts[TrGen[item]] + '\n')
+	with open (trIDs, 'r') as f:
+		for line in f:
+			if line[0] =='#':
+				continue
+			cur = line.strip().split()
+            		W.write(cur[1] + '\t' + GenCounts[cur[0]] + '\n')
 
 def main():
     
