@@ -40,7 +40,7 @@ find_exon = function(pos, exondata) {
 ## (-1) because of mpileup...
 
 chr15_snp_exons = sapply(snp_merged_vec, function(i) {find_exon(i, exons)})
-snp_vs_exons = snp_merged_vec[which(chr15_snp_exons != 0)
+snp_vs_exons = snp_merged_vec[which(chr15_snp_exons != 0)]
 
 # bed file for mpileup:
 
