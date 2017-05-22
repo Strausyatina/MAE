@@ -63,3 +63,7 @@ points (x, -y_129S1, type = 'h', col = 'red')
 y_unit = sapply(x, function(i) {sum(i <= snp_merged_vec & snp_merged_vec < i+delta)})
 plot(x, y_unit, type = 'h', col = 'magenta',
      ylab = '# snp', xlab = 'position', main = paste('15, delta =',delta))
+
+y_exons = sapply(x, function(i) {sum(i <= snp_vs_exons & snp_vs_exons < i+delta)})
+plot(x, y_exons, type = 'h', col = 'cyan',
+     ylab = '# snp', xlab = 'position', main = paste('15, delta =',delta))
