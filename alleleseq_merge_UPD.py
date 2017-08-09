@@ -14,7 +14,7 @@ import argparse;
 import random;
 import subprocess;
 
-def load_sam(sam, pairness):
+def load_sam(sam, paired):
 	print("LOADING SAM %s"%(sam))
 	out_dict = {}
 	in_stream = open(sam, "r")
@@ -24,7 +24,7 @@ def load_sam(sam, pairness):
                 	read_name = columns[0]
                 	if int(columns[4]) == 255:
                     		## i.e. read is  uniquelly alligned 
-                    		if (pairness):
+                    		if (paired):
                          		if read_name not in out_dict:
                              			out_dict[read_name] = {}
                          		if int(columns[8]) > 0:
@@ -73,11 +73,11 @@ def main():
         print("")
 
         #1 load SAM files into memory
-        pat_sam = load_sam(args.pat_sam)
+        paired = args.paired
+        pat_sam = load_sam(args.pat_sam, paired)
         pat_reads = set(pat_sam.keys())
-        mat_sam = load_sam(args.mat_sam)
+        mat_sam = load_sam(args.mat_sam, paired)
         mat_reads = set(mat_sam.keys())
-	paired = args.paired
 
         #1b get header
         header = subprocess.check_output("samtools view -SH "+args.mat_sam, shell=True)
