@@ -20,7 +20,7 @@ def load_sam(sam, paired):
 	in_stream = open(sam, "r")
 	for line in in_stream:
         	if line[0] != "@":
-                	columns = line.strip().plit("\t")
+                	columns = line.strip().split("\t")
                 	read_name = columns[0]
                 	if int(columns[4]) == 255:
                     		## i.e. read is  uniquelly alligned 
@@ -41,7 +41,7 @@ def load_sam(sam, paired):
 
 def get_star_alignment_score(sam_line, paired):
 	if paired: 
-		sam_fields = sam_fields['A']
+		sam_line = sam_line['A']
         sam_fields = sam_line.strip().split("\t")
         for field in sam_fields:
                 if "AS:i:" in field:
