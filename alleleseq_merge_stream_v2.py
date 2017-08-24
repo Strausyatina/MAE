@@ -1,7 +1,16 @@
 ##
 ## NOTE: 
-## -- SAM-files should be already sorted by read names
+## -- SAM-files should be already sorted by read names 
+##    [ samtools sort -n -O sam -o [name].sam -T [name] -@10 [STAR_output].bam ]
 ## -- Read names must be non-empty
+## -- Possible pre-proc: 
+##    [ STAR --genomeDir [path] \
+##    --readFilesIn [fasta1] [fasta2] \
+##    --sjdbGTFfile [gtf] \
+##    --outFileNamePrefix [prefix.] \
+##    --runThreadN 10 --outFilterMultimapNmax 1 \
+##    --outSAMattrRGline [ID:mat|pat] \
+##    --outSAMattributes All --outSAMtype BAM SortedByCoordinate ]
 ## USAGE: alleleseq_merge_stream.py --pat_sam [path to file] --mat_sam [path to file] --o [path to file] --paired [0|1]
 ##
 
