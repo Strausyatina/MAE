@@ -82,9 +82,7 @@ def readline_to_write(r_data, paired):
 def asc_order(name1, name2):
     return (uporotiycmp(name1, name2) <= 0)
 
-
 def main():
-
     # Parse arguments:
 
     parser = argparse.ArgumentParser()
@@ -194,10 +192,6 @@ def main():
                 out_stream.write(readline_to_write(m_read, paired))
                 m_read = update_m()
 
-
-    print(pat_only, mat_only, equal, pat_count, mat_count)
-   
- 
     ### Write the remain part of reads:
     if bool(m_read): 
         while bool(m_read):
