@@ -1,11 +1,11 @@
 '''
 Stephan Castel's code, modified:
 -- add paired-end function
+-- reduce memory burden (no sam uploading & chr divided)
+-- in progress : merge counts  = STAR_qual - 2*(SNPmismatch) + 2*(SNPconsensus) - numOfAlignedOutOfExons
 
-USAGE: 
+USAGE: ./alleleseq_merge_AD.py --pat_sam [path to file] --mat_sam [path to file] --o [path to folder] --paired [0|1]
 
-NOTE:
-1. SAM files should not contain multiple alignments (for this version) 
 '''
 
 import sys;
@@ -13,46 +13,40 @@ import pandas;
 import argparse;
 import random;
 import subprocess;
+import time
+start_time = time.time()
 
-def load_sam(sam, paired):
-	print("LOADING SAM %s"%(sam))
+def load_sam_scores(sam, paired):
+	print("LOADING SCORES SAM %s"%(sam))
 	out_dict = {}
 	in_stream = open(sam, "r")
 	for line in in_stream:
-        	if line[0] != "@":
+        	if line[0] != "@": 
                 	columns = line.strip().split("\t")
                 	read_name = columns[0]
-                	if int(columns[4]) == 255:
-                    		## i.e. read is  uniquelly alligned 
-                    		if (paired):
-                         		if read_name not in out_dict:
-                             			out_dict[read_name] = {}
-                         		if int(columns[8]) > 0:
-                             			out_dict[read_name]['A'] = line
-                         		else:
-                             			out_dict[read_name]['B'] = line
-                         	## it will work if all the paires are really pairs 
-                         	## and we have no cases with "one-end pairs"
-                   		else:
-                        		out_dict[read_name] = line;
+                	if int(columns[4]) != 255:
+				continue
+                    	## i.e. read is  uniquelly alligned 
+                    	if (paired):
+                        	if read_name not in out_dict:
+                        		out_dict[read_name] = {}
+                         	if int(columns[8]) > 0:
+                             		out_dict[read_name]['A'] = get_score(line)
+                         	else:
+                             		out_dict[read_name]['B'] = get_score(line)
+                   	else:
+                        	out_dict[read_name] = get_score(line)
         in_stream.close()
+	# NOTE: we suppose the data is correct, i.e. names are correct and unique, paired data consist of pairs , etc.
         return(out_dict)
 
 
-def get_star_alignment_score(sam_line, paired):
-	if paired: 
-		sam_line = sam_line['A']
-        sam_fields = sam_line.strip().split("\t")
-        for field in sam_fields:
-                if "AS:i:" in field:
-                        return(int(field.replace("AS:i:","")))
-	return 0 
-
-
-def readline_to_write(read_data, paired):
-	if paired:
-		return read_data['A']+read_data['B']
-	return read_data
+def get_score(sam_line):
+	q_score = 0
+	sam_fields = sam_line.strip().split("\t")
+	for field in sam_fields:
+		if "AS:i:" in field: q_score = int(field.replace("AS:i:",""))
+	return q_score
 
 
 def main():
@@ -64,62 +58,64 @@ def main():
         parser.add_argument("--paired", default=0, help="Flag: If reads are paired-end")
         args = parser.parse_args()
         
-        version = "0.1"
-        print("")
-        print("##################################################")
-        print("              AlleleSeq Merge v%s"%(version))
-        print("  Author: Stephane Castel (scastel@nygenome.org)")
-        print("##################################################")
-        print("")
-
-        #1 load SAM files into memory
-        paired = args.paired
-        pat_sam = load_sam(args.pat_sam, paired)
+        paired = int(args.paired)
+        
+        # First get reads that only map in one or the other
+        pat_sam = load_sam_scores(args.pat_sam, paired)
         pat_reads = set(pat_sam.keys())
-        mat_sam = load_sam(args.mat_sam, paired)
+        mat_sam = load_sam_scores(args.mat_sam, paired)
         mat_reads = set(mat_sam.keys())
 
-        #1b get header
+	mat_only_reads = mat_reads - pat_reads
+        pat_only_reads = pat_reads - mat_reads
+
+        # Find reads that are shared in both and chose the better alignment
+        mat_count , pat_count = 0 , 0
+        equal = 0
+        mat_rand , pat_rand = 0 , 0
+        mat_better_reads = set()
+	pat_better_reads = set()
+        
+	print("MERGING READS");
+        both_reads = mat_reads & pat_reads;
+        for read in both_reads:
+		if paired:
+			mat_score , pat_score = mat_sam[read]['A']+mat_sam[read]['B'] , pat_sam[read]['A']+pat_sam[read]['B']
+		else:  mat_score , pat_score = mat_sam[read], pat_sam[read]
+                if mat_score > pat_score:
+                        mat_count += 1
+			mat_better_reads.add(read)
+                elif pat_score > mat_score:
+                        pat_count += 1;
+                        pat_better_reads.add(read)
+                else:
+                        equal += 1;
+                        x = random.randint(0, 1);
+                        if x == 1:
+				mat_better_reads.add(read)
+                                mat_rand += 1
+                        else:
+				pat_better_reads.add(read)
+                                pat_rand += 1
+
+	# Get header
         header = subprocess.check_output("samtools view -SH "+args.mat_sam, shell=True)
         out_stream = open(args.o, "w")
         out_stream.write(header)
         out_stream.write("@RG     ID:pat\n")
 
-        #2 first get reads that only map in one or the other
-        mat_only_reads = mat_reads - pat_reads
-        pat_only_reads = pat_reads - mat_reads
-        for read in mat_only_reads:
-		out_stream.write(readline_to_write(mat_sam[read], paired))
-        for read in pat_only_reads:
-                out_stream.write(readline_to_write(pat_sam[read], paired))
+	# Write reads 
+	samfiles = [args.mat_sam, args.pat_sam]
+	for samf in samfiles:
+		if samf == args.mat_sam: samset = mat_better_reads.union(mat_only_reads) 
+		else: samset = pat_better_reads.union(pat_only_reads)
+        	in_stream = open(samf, "r")
+        	for line in in_stream:
+                	if line[0] != "@":
+                        	if line.strip().split("\t")[0] in samset:
+					 out_stream.write(line)
+		in_stream.close()
 
-        #3 now find reads that are shared in both and chose the better alignment
-        mat_count = 0;
-        pat_count = 0;
-        equal = 0;
-        mat_rand = 0;
-        pat_rand = 0;
-        print("MERGING READS");
-        both_reads = mat_reads & pat_reads;
-        for read in both_reads:
-                mat_score = get_star_alignment_score(mat_sam[read], paired)                
-                pat_score = get_star_alignment_score(pat_sam[read], paired)
-                if mat_score > pat_score:
-                        mat_count += 1;
-                        out_stream.write(readline_to_write(mat_sam[read], paired))
-                
-                elif pat_score > mat_score:
-                        pat_count += 1;
-                        out_stream.write(readline_to_write(pat_sam[read], paired))
-                else:
-                        equal += 1;
-                        x = random.randint(0, 1);
-                        if x == 1:
-                                out_stream.write(readline_to_write(mat_sam[read], paired))
-                                mat_rand += 1
-                        else:
-                                out_stream.write(readline_to_write(pat_sam[read], paired))
-                                pat_rand += 1
         out_stream.close();        
 
         print("SUMMARY");
@@ -130,7 +126,7 @@ def main():
         print("%d reads where MATQ = PATQ"%(equal));
         print("%d MAT randomly selected"%(mat_rand));
         print("%d PAT randomly selected"%(pat_rand));
-
+	print("----- %s seconds -----" % (time.time() - start_time))
 
 if __name__ == "__main__":
         main();

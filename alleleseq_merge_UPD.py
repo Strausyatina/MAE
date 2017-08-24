@@ -14,6 +14,9 @@ import argparse;
 import random;
 import subprocess;
 
+import time
+start_time = time.time()
+
 def load_sam(sam, paired):
 	print("LOADING SAM %s"%(sam))
 	out_dict = {}
@@ -73,7 +76,7 @@ def main():
         print("")
 
         #1 load SAM files into memory
-        paired = args.paired
+        paired = int(args.paired)
         pat_sam = load_sam(args.pat_sam, paired)
         pat_reads = set(pat_sam.keys())
         mat_sam = load_sam(args.mat_sam, paired)
@@ -130,7 +133,7 @@ def main():
         print("%d reads where MATQ = PATQ"%(equal));
         print("%d MAT randomly selected"%(mat_rand));
         print("%d PAT randomly selected"%(pat_rand));
-
+	print("----- %s seconds -----" % (time.time() - start_time))
 
 if __name__ == "__main__":
         main();
